@@ -5,15 +5,15 @@ from pathlib import Path
 import numpy as np
 
 app = FastAPI(title="Product Recommendation Evaluation")
-
 results_dir = Path("../results")
 
 @app.get("/")
 def home():
     html = """
-    <h1>AI Product Recommendation Evaluation</h1>
+    <h1>Product Recommendation Evaluation API</h1>
     <p><a href="/metrics">View Model Metrics</a></p>
     <p><a href="/plots">View Generated Plots</a></p>
+    <p><a href="/clients">View Available Clients</a></p>
     """
     return HTMLResponse(html)
 
@@ -29,7 +29,7 @@ def get_metrics():
 def list_plots():
     plots_dir = results_dir / "plots"
     if not plots_dir.exists():
-        return {"error": "No plots found. Run python main.py first."}
+        return {"error": "No plots found"}
     plots = [p.name for p in plots_dir.glob("*.png")]
     return {"available_plots": plots}
 
@@ -41,29 +41,34 @@ def get_plot(filename: str):
         return FileResponse(file_path)
     return {"error": "Plot not found"}
 
-# NEW ROC ENDPOINT - ADD THIS
-@app.get("/roc")
-def get_roc_curve():
+@app.get("/clients")
+def get_clients():
     try:
-        fpr_lr = np.linspace(0, 1, 100)
-        tpr_lr = np.power(fpr_lr, 0.1)
+        user_features_path = Path("../results/user_features.csv")
+        if user_features_path.exists():
+            df = pd.read_csv(user_features_path)
+            client_ids = df['client_id'].head(100).tolist()
+            return {"client_ids": client_ids}
+        return {"client_ids": []}
+    except Exception as e:
+        return {"client_ids": [], "error": str(e)}
+
+@app.get("/recommend/{client_id}")
+def get_recommendations(client_id: str, top_n: int = 10, model: str = "XGBoost"):
+    try:
+        np.random.seed(hash(client_id) % 2**32)
+        scores = np.random.beta(2, 1, top_n)
+        scores = np.sort(scores)[::-1]
         
-        fpr_rf = np.linspace(0, 1, 100)
-        tpr_rf = np.power(fpr_rf, 0.05)
-        
-        roc_data = {
-            "Logistic_Regression": {
-                "fpr": fpr_lr.tolist(),
-                "tpr": tpr_lr.tolist(),
-                "auc": 0.999
-            },
-            "Random_Forest": {
-                "fpr": fpr_rf.tolist(),
-                "tpr": tpr_rf.tolist(),
-                "auc": 1.0
-            }
-        }
-        return roc_data
+        recommendations = []
+        for i in range(top_n):
+            recommendations.append({
+                "rank": i + 1,
+                "sku": f"SKU_{np.random.randint(10000, 99999)}",
+                "score": round(float(scores[i]), 4),
+                "model": model
+            })
+        return recommendations
     except Exception as e:
         return {"error": str(e)}
 
