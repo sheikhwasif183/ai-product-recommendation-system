@@ -2,19 +2,55 @@
 === Logistic Regression ===
               precision    recall  f1-score   support
 
-           0       1.00      0.86      0.92         7
-           1       0.95      1.00      0.97        18
+           0       0.73      0.60      0.66     61380
+           1       0.41      0.55      0.47     30699
 
-    accuracy                           0.96        25
-   macro avg       0.97      0.93      0.95        25
-weighted avg       0.96      0.96      0.96        25
+    accuracy                           0.59     92079
+   macro avg       0.57      0.58      0.57     92079
+weighted avg       0.62      0.59      0.60     92079
+
+Confusion Matrix:
+[[36994 24386]
+ [13762 16937]]
 
 === Random Forest ===
               precision    recall  f1-score   support
 
-           0       1.00      1.00      1.00         7
-           1       1.00      1.00      1.00        18
+           0       0.93      0.68      0.79     61380
+           1       0.59      0.90      0.71     30699
 
-    accuracy                           1.00        25
-   macro avg       1.00      1.00      1.00        25
-weighted avg       1.00      1.00      1.00        25
+    accuracy                           0.75     92079
+   macro avg       0.76      0.79      0.75     92079
+weighted avg       0.82      0.75      0.76     92079
+
+Confusion Matrix:
+[[41892 19488]
+ [ 3135 27564]]
+
+=== XGBoost ===
+              precision    recall  f1-score   support
+
+           0       0.92      0.96      0.94     61380
+           1       0.92      0.84      0.88     30699
+
+    accuracy                           0.92     92079
+   macro avg       0.92      0.90      0.91     92079
+weighted avg       0.92      0.92      0.92     92079
+
+Confusion Matrix:
+[[59193  2187]
+ [ 4828 25871]]
+
+=== Neural Network ===
+              precision    recall  f1-score   support
+
+           0       0.97      0.88      0.92     61380
+           1       0.80      0.94      0.86     30699
+
+    accuracy                           0.90     92079
+   macro avg       0.88      0.91      0.89     92079
+weighted avg       0.91      0.90      0.90     92079
+
+Confusion Matrix:
+[[54147  7233]
+ [ 1832 28867]]
